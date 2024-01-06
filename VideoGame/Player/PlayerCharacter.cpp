@@ -110,14 +110,9 @@ void APlayerCharacter::EndJump(const FInputActionValue& Value)
 
 void APlayerCharacter::TryInteract(const FInputActionValue& Value)
 {
-	FHitResult Hit; 
-	if(InteractTrace(Hit))
+	if(IsLookingAtInteractable && InteractableInLookRange)
 	{
-		AActor* HitActor = Hit.GetActor();
-		if(HitActor->Implements<UInteractableActor>())
-		{
-			IInteractableActor::Execute_Interact(HitActor);
-		}
+		IInteractableActor::Execute_Interact(InteractableInLookRange);
 	}
 }
 
@@ -142,11 +137,63 @@ bool APlayerCharacter::InteractTrace(FHitResult& OutHit) const
 	return bHit;
 }
 
+AActor* APlayerCharacter::TryLookingAtInteractActor()
+{
+	AActor* HitActor = nullptr;
+	FHitResult Hit; 
+	if(InteractTrace(Hit))
+	{
+		HitActor = Hit.GetActor();
+		if((IsLookingAtInteractable = HitActor->Implements<UInteractableActor>()) == true)
+		{
+			if(LookState != CurrentlyLookingAtInteractable)
+			{
+				LookState = FirstFrameOfSeeingInteractable;
+			}
+		}
+	}
+	else
+	{
+		if(LookState != NotLookingAtInteractable)
+		{
+			LookState = FirstFrameOfLookingAwayFromInteractable;
+		}
+	}
+
+	return HitActor;
+}
+
+void APlayerCharacter::HandleCurrentLook(AActor* HitActor)
+{
+	switch (LookState) {
+	case FirstFrameOfSeeingInteractable:
+		InteractableInLookRange = HitActor;
+		IInteractableActor::Execute_SetVisibility_InteractUI(InteractableInLookRange, true);
+		LookState = CurrentlyLookingAtInteractable;
+		break;
+		
+	case CurrentlyLookingAtInteractable:
+		break;
+		
+	case FirstFrameOfLookingAwayFromInteractable:
+		IInteractableActor::Execute_SetVisibility_InteractUI(InteractableInLookRange, false);
+		IsLookingAtInteractable = false;
+		InteractableInLookRange = nullptr;
+		LookState = NotLookingAtInteractable;
+		break;
+		
+	case NotLookingAtInteractable:
+		break;
+	default: break;
+	}
+}
+
 /***** No more input *****/
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
+	HandleCurrentLook(TryLookingAtInteractActor());
 }
 

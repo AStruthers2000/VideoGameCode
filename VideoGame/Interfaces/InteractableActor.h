@@ -14,6 +14,9 @@ class IInteractableActor
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetVisibility_InteractUI(bool NewVisibility);
 };
 
 

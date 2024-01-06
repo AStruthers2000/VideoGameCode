@@ -12,6 +12,15 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 
+UENUM()
+enum ERaycastState
+{
+	FirstFrameOfSeeingInteractable,
+	CurrentlyLookingAtInteractable,
+	FirstFrameOfLookingAwayFromInteractable,
+	NotLookingAtInteractable
+};
+
 constexpr ECollisionChannel InteractionTraceChannel = ECC_GameTraceChannel1;
 
 UCLASS(Config=PlayerConfig)
@@ -70,4 +79,16 @@ private:
 	float InteractDistance = 500.f;
 
 	bool InteractTrace(FHitResult& OutHit) const;
+	AActor* TryLookingAtInteractActor();
+	void HandleCurrentLook(AActor* HitActor);
+
+	bool IsLookingAtInteractable = false;
+
+	UPROPERTY()
+	AActor* InteractableInLookRange;
+
+	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Variables", meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<ERaycastState> LookState = NotLookingAtInteractable;
 };
