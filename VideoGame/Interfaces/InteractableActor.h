@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "InteractableActor.generated.h"
 
-class UWidgetComponent;
-
 UINTERFACE(MinimalAPI, Blueprintable)
 class UInteractableActor : public UInterface
 {
@@ -13,7 +11,6 @@ class IInteractableActor
 {
 	GENERATED_BODY()
 
-	//adding a comment
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact();
