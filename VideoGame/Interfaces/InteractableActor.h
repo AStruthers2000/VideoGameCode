@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "InteractableActor.generated.h"
 
+class UWidgetComponent;
+
 UINTERFACE(MinimalAPI, Blueprintable)
 class UInteractableActor : public UInterface
 {
