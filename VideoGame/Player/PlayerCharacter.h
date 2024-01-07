@@ -67,9 +67,6 @@ protected:
 	void EndJump(const FInputActionValue& Value);
 	void TryInteract(const FInputActionValue& Value);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void PrototypeInteract();
-
 public:
 	FORCEINLINE USpringArmComponent* GetPlayerSpringArm() const { return SpringArm; }
 	FORCEINLINE UCameraComponent* GetPlayerCamera() const { return Camera; }

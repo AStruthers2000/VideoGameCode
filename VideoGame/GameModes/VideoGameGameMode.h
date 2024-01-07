@@ -13,6 +13,8 @@ class AVideoGameGameMode : public AGameModeBase
 
 public:
 	AVideoGameGameMode();
+
+	
 };
 
 

@@ -7,6 +7,8 @@
 #include "VideoGame/Interfaces/InteractableActor.h"
 #include "Portal.generated.h"
 
+class UWidgetComponent;
+
 UCLASS()
 class VIDEOGAME_API APortal : public AActor, public IInteractableActor
 {
@@ -16,7 +18,7 @@ public:
 	APortal();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Geometry", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* mesh;
+	UStaticMeshComponent* Mesh;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -25,5 +27,22 @@ protected:
 public:	
 	//InteractableActor interface
 	virtual void Interact_Implementation() override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "Portal Functionality", meta = (AllowPrivateAccess = "true"))
+	TSoftObjectPtr<UWorld> LevelToLoad;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "Portal Functionality", meta = (AllowPrivateAccess = "true"))
+	float LevelLoadingTime;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "Portal Functionality", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* TimerWidget;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "Portal Functionality", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> TimerWidgetClass;
+	
+
+	FTimerHandle PortalLoadLevelTimerHandle;
+	void OnTimerComplete_LoadLevel();
 };
 
