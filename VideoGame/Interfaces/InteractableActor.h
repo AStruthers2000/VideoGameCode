@@ -11,6 +11,7 @@ class IInteractableActor
 {
 	GENERATED_BODY()
 
+	//adding a comment
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact();
