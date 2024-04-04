@@ -75,7 +75,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	float InteractDistance = 500.f;
 
-	bool InteractTrace(FHitResult& OutHit) const;
+	bool InteractTrace(FHitResult& OutHit, bool UseCameraForward) const;
 	AActor* TryLookingAtInteractActor();
 	void HandleCurrentLook(AActor* HitActor);
 

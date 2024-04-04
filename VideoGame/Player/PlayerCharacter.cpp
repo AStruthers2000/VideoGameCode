@@ -116,12 +116,20 @@ void APlayerCharacter::TryInteract(const FInputActionValue& Value)
 	}
 }
 
-bool APlayerCharacter::InteractTrace(FHitResult& OutHit) const
+bool APlayerCharacter::InteractTrace(FHitResult& OutHit, bool UseCameraForward = false) const
 {
 	const FVector Start = GetActorLocation();
-	const FVector CameraForward = FVector(Camera->GetForwardVector().X, Camera->GetForwardVector().Y, 0.f);
+	FVector TraceForward;
+	if(UseCameraForward)
+	{
+		TraceForward = FVector(Camera->GetForwardVector().X, Camera->GetForwardVector().Y, 0.f);
+	}
+	else
+	{
+		TraceForward = FVector(GetActorForwardVector().X, GetActorForwardVector().Y, 0.f);
+	}
 	const float CapsuleRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
-	const FVector End = Start + CameraForward * InteractDistance;
+	const FVector End = Start + TraceForward * InteractDistance;
 	
 	static const FName TraceName(TEXT("Interaction Trace"));
 	FCollisionQueryParams Params(TraceName);
@@ -140,9 +148,10 @@ bool APlayerCharacter::InteractTrace(FHitResult& OutHit) const
 AActor* APlayerCharacter::TryLookingAtInteractActor()
 {
 	AActor* HitActor = nullptr;
-	FHitResult Hit; 
-	if(InteractTrace(Hit))
+	FHitResult CameraHit, PlayerHit; 
+	if(InteractTrace(CameraHit, true) || InteractTrace(PlayerHit, false))
 	{
+		FHitResult Hit = CameraHit.bBlockingHit ? CameraHit : PlayerHit;
 		HitActor = Hit.GetActor();
 		if((IsLookingAtInteractable = HitActor->Implements<UInteractableActor>()) == true)
 		{
